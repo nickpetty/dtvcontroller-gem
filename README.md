@@ -46,3 +46,50 @@ Getting information from systeminfo:
 	a = "accessCardId" (see "Command List" for full list of commands)
 	b = control.get_sysinfo(a)
 	puts b => 0918-7948-2357 (If timeout, returns "Can't Connect")
+
+Command List:
+=============
+Remote Keys:
+------------
++ power
++ poweron
++ poweroff
++ format
++ pause
++ rew
++ replay
++ stop
++ advance
++ ffwd
++ record
++ play
++ guide
++ active
++ list
++ exit
++ back
++ menu
++ info
++ up
++ down
++ left
++ right
++ select
++ red
++ green
++ yellow
++ blue
++ ch_up
++ ch_dn
++ prev
++ 0-9
++ dash (or '-')
++ enter
+
+sysinfo commands:
+-----------------
+
++ accessCardId 
++ receiverId
++ stbSoftwareVersion
++ version
