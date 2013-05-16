@@ -23,7 +23,7 @@ Initialize:
 
 	control = Dtvcontroller.new("192.168.1.100")
 
-Get current channel: 
+Get current channel:
 --------------------
 
 Movie Example:
@@ -47,7 +47,7 @@ Getting information from systeminfo:
 	b = control.get_sysinfo(a)
 	puts b => 0918-7948-2357 (If timeout, returns "Can't Connect")
 
-Command List:
+Command List
 =============
 Remote Keys:
 ------------
