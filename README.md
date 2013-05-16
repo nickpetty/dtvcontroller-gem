@@ -16,6 +16,7 @@ Install
 	
 Example Usage
 =============
+(If timeout, returns "Can't Connect")
 
 Initialize:
 -----------
@@ -24,7 +25,6 @@ Initialize:
 
 Get current channel: 
 --------------------
-(If timeout, returns "Can't Connect")
 
 Movie Example:
 
