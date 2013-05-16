@@ -9,6 +9,11 @@ Requirements
 + json (gem install json)
 + Whole-Home -> External Device - All set to 'Allow'
 
+Install
+=======
+
+	gem install dtvcontroller
+	
 Example Usage
 =============
 
