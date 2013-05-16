@@ -15,6 +15,8 @@ Example Usage
 Initialize:
 -----------
 
+	control = Dtvcontroller.new("192.168.1.100")
+
 Get current channel: (If timeout, returns "Can't Connect")
 ----------------------------------------------------------
 
