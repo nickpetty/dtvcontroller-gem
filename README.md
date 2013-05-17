@@ -5,9 +5,9 @@ This gem allows one to control a DirecTV STB (receiver).  This works with the cu
 Requirements
 ============
 
-+ net/http (gem install net/http)
-+ json (gem install json)
-+ Whole-Home -> External Device - All set to 'Allow'
++ net/http
++ json
++ External Device set to Allow on DTV Box (Menu -> Settings -> Whole-Home -> External Device - All set to 'Allow')
 
 Install
 =======
