@@ -1,6 +1,6 @@
 Description
 ============
-This gem allows one to control a DirecTV STB (receiver).
+This gem allows one to control a DirecTV STB (receiver).  This works with the current implication of the "External Device" control system.  DirecTV could change or even disable this method at any time without notice.
 
 Requirements
 ============
