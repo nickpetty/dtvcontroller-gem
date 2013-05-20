@@ -88,6 +88,7 @@ Remote Keys:
 
 sysinfo commands:
 -----------------
+(case sensitive)
 
 + accessCardId 
 + receiverId
