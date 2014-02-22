@@ -42,7 +42,7 @@ class Dtvcontroller
 			result = Net::HTTP.get(uri)
 			response = JSON.parse(result)
 
-			if response["episodeTitle"] == nil # Not allow programs have an 'episodetitle'.  However, from my experience, all have a 'title' at the least.
+			if response["episodeTitle"] == nil # Not all programs have an 'episodetitle'.  However, from my experience, all have a 'title' at the least.
 				return response["major"].to_s + ': ' + response["callsign"] + ' - ' + response["title"] # Callsign is the channel 'name'
 			else
 				return response["major"].to_s + ': ' + response["callsign"] + ' - ' + response["title"] + ': ' + response["episodeTitle"]
@@ -74,7 +74,10 @@ class Dtvcontroller
 		end
 	end
 	
-	#key-list: power, poweron, poweroff, format, pause, rew, replay, stop, advance, ffwd, record, play, guide, active, list, exit, back, menu, info, up, down, left, right, select, red, green, yellow, blue, ch_up, ch_dn, prev, 0-9, dash(or '-'), enter
+	#	key-list: 
+	#	power, poweron, poweroff, format, pause, rew, replay, stop, advance, ffwd 
+	#	record, play, guide, active, list, exit, back, menu, info, up, down, left, right 
+	#	select, red, green, yellow, blue, ch_up, ch_dn, prev, 0-9, dash(or '-'), enter
 	def send_key(key)
 		uri = URI("http://" + @ip + ":8080/remote/processKey?key=" + key)
 		begin
