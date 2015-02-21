@@ -13,7 +13,7 @@ module Dtvcontroller
     end
 
     def ver
-      "SetTopBox#ver is deprecated, use '$ gem which dtvcontroller'\n2.0.1"
+      "SetTopBox#ver is deprecated, use '$ gem which dtvcontroller'\n2.0.0"
     end
 
     def currently_playing
@@ -43,12 +43,10 @@ module Dtvcontroller
     end
 
     def send_key(key)
-      uri = URI("http://" + @ip + ":8080/remote/processKey?key=" + key)
-      begin
-        Net::HTTP.get(uri)
-      rescue Errno::ETIMEDOUT => e
-        return "Can't Connect"
-      end
+      raise "Unknown remote key: #{key}" unless SEND_KEY_OPTIONS.include?(key.to_sym)
+      url = "#{base_url}remote/processKey?key=#{key}"
+      response_hash = get_json_parsed_response_body(url)
+      response_hash["status"]["msg"]
     end
 
     def system_info_options
@@ -56,7 +54,7 @@ module Dtvcontroller
     end
 
     def system_info(item)
-      value = validated_lookup(item, SYSTEM_INFO_HASH)
+      value = validated_hash_lookup(item, SYSTEM_INFO_HASH)
       url = "#{base_url}info/getVersion"
       response_hash = get_json_parsed_response_body(url)
       response_hash[value]
@@ -65,11 +63,11 @@ module Dtvcontroller
 
     private
 
-    def validated_lookup(key, hash_to_search)
+    def validated_hash_lookup(key, hash_to_search)
       begin
         hash_to_search.fetch(key.to_sym)
       rescue KeyError
-        raise "Unrecognized key (#{key}) in hash (#{hash_to_search})"
+        raise "Unrecognized system option: #{key}"
       end
     end
 
@@ -79,9 +77,9 @@ module Dtvcontroller
         response = Net::HTTP.get(URI(url))
         JSON.parse(response)
       rescue Errno::ETIMEDOUT
-        return "Cannot connect to set top box"
+        raise "Cannot connect to set top box"
       rescue Errno::EHOSTUNREACH
-        return "Unreachable host likely caused by no internet connect"
+        raise "Unreachable host likely caused by no internet connect"
       end
     end
 

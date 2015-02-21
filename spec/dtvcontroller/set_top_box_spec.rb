@@ -17,10 +17,10 @@ module Dtvcontroller
     end
 
     describe "#ver" do
-      it "returns a deprecation warning and '2.0.1'" do
+      it "returns a deprecation warning and '2.0.0'" do
         set_top_box = Dtvcontroller::SetTopBox.new("192.168.1.100")
 
-        expect(set_top_box.ver).to eq("SetTopBox#ver is deprecated, use '$ gem which dtvcontroller'\n2.0.1")
+        expect(set_top_box.ver).to eq("SetTopBox#ver is deprecated, use '$ gem which dtvcontroller'\n2.0.0")
       end
     end
 
@@ -116,6 +116,13 @@ module Dtvcontroller
         expect(set_top_box.system_info(:version)).to eq(version)
       end
 
+      it "returns the access card id when given a string (not a symbol)" do
+        access_card_id = "0123-4567-8901"
+        set_top_box = Dtvcontroller::SetTopBox.new("192.168.1.100")
+
+        expect(set_top_box.system_info("access_card_id")).to eq(access_card_id)
+      end
+
       it "raises a RuntimeError on a bad input parameter" do
         set_top_box = Dtvcontroller::SetTopBox.new("192.168.1.100")
 
@@ -200,18 +207,18 @@ module Dtvcontroller
     end
 
     describe "#get_currently_playing" do
-      # Use 192.168.1.99 for a TV episode
+      # Use 192.168.1.101 for a TV episode
       it "returns major and callsign and title and episode title for a tv show" do
         tv_response = "299: NIKeHD - How I Met Your Mother: Sunrise"
-        set_top_box = Dtvcontroller::SetTopBox.new("192.168.1.99")
+        set_top_box = Dtvcontroller::SetTopBox.new("192.168.1.101")
 
         expect(set_top_box.currently_playing).to eq(tv_response)
       end
 
-      # Use 192.168.1.98 for a movie
+      # Use 192.168.1.102 for a movie
       it "returns major and callsign and title for a movie" do
         movie_response = "501: HBOeHD - Good Burger"
-        set_top_box = Dtvcontroller::SetTopBox.new("192.168.1.98")
+        set_top_box = Dtvcontroller::SetTopBox.new("192.168.1.102")
 
         expect(set_top_box.currently_playing).to eq(movie_response)
       end
@@ -238,6 +245,40 @@ module Dtvcontroller
         get_sysinfo_method = set_top_box.method(:currently_playing)
 
         expect(system_info_method).to eq(get_sysinfo_method)
+      end
+    end
+
+    describe "#send_key" do
+      it "sends the dash key" do
+        set_top_box = Dtvcontroller::SetTopBox.new("192.168.1.100")
+
+        expect(set_top_box.send_key(:dash)).to eq("OK.")
+      end
+
+      it "sends the dash key given a string (not a symbol)" do
+        set_top_box = Dtvcontroller::SetTopBox.new("192.168.1.100")
+
+        expect(set_top_box.send_key("dash")).to eq("OK.")
+      end
+
+      it "raises a RuntimeError on a bad input parameter" do
+        set_top_box = Dtvcontroller::SetTopBox.new("192.168.1.100")
+
+        expect { set_top_box.send_key(:not_a_key) }.to raise_error(RuntimeError)
+      end
+
+      # special IP address 1.2.3.4 triggers the Webmock timeout
+      it "raises a RuntimeError on a timeout" do
+        set_top_box = Dtvcontroller::SetTopBox.new("1.2.3.4")
+
+        expect { set_top_box.send_key(:dash) }.to raise_error(RuntimeError)
+      end
+
+      # special IP address 4.3.2.1 triggers the Webmock runtime error
+      it "raises a RuntimeError on a failed connection" do
+        set_top_box = Dtvcontroller::SetTopBox.new("4.3.2.1")
+
+        expect { set_top_box.send_key(:dash) }.to raise_error(RuntimeError)
       end
     end
 
