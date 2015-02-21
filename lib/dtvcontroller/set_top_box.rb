@@ -13,58 +13,30 @@ module Dtvcontroller
     end
 
     def ver
-      "Dtvcontroller::SetTopBox#ver is deprecated, use '$ gem which dtvcontroller'\n2.0.1"
+      "SetTopBox#ver is deprecated, use '$ gem which dtvcontroller'\n2.0.1"
     end
 
-    def get_channel
-    uri = URI('http://' + @ip + ':8080/tv/getTuned')
-
-      begin
-        result = Net::HTTP.get(uri)
-        response = JSON.parse(result)
-
-        if response["episodeTitle"] == nil # Not all programs have an 'episodetitle'.  However, from my experience, all have a 'title' at the least.
-          return response["major"].to_s + ': ' + response["callsign"] + ' - ' + response["title"] # Callsign is the channel 'name'
-        else
-          return response["major"].to_s + ': ' + response["callsign"] + ' - ' + response["title"] + ': ' + response["episodeTitle"]
-        end
-
-      rescue Errno::ETIMEDOUT => e
-        return "Can't Connect"
+    def currently_playing
+      url = "#{base_url}tv/getTuned"
+      response_hash = get_json_parsed_response_body(url)
+      channel = response_hash["major"].to_s
+      network = response_hash["callsign"].to_s
+      program = response_hash["title"].to_s
+      result = "#{channel}: #{network} - #{program}"
+      if response_hash.has_key?("episodeTitle")
+        result = "#{result}: #{response_hash["episodeTitle"]}"
       end
+      result
     end
+    alias_method :get_channel, :currently_playing
 
     def tune_to_channel(number)
-      uri = URI("#{base_url}tv/tune?major=#{number}")
-      begin
-        response = Net::HTTP.get(uri)
-        result = JSON.parse(response)
-        msg = result["status"]["msg"]
-      rescue Errno::ETIMEDOUT
-        raise Chickens
-      end
+      return "no input" if number == ""
+      url = "#{base_url}tv/tune?major=#{number}"
+      response_hash = get_json_parsed_response_body(url)
+      response_hash["status"]["msg"]
     end
-
-    def tune(channel)
-      if chan == ''
-        return 'no input'
-      else
-        uri = URI('http://' + @ip + ':8080/tv/tune?major=' + chan)
-
-        begin
-          result = Net::HTTP.get(uri)
-          response = JSON.parse(result)
-          parse = response["status"]
-          message = parse["msg"]
-          if message != "OK."
-            return message
-          end
-
-        rescue Errno::ETIMEDOUT => e
-          return "Can't Connect"
-        end
-      end
-    end
+    alias_method :tune, :tune_to_channel
 
     def send_key_options
       SEND_KEY_OPTIONS
@@ -101,7 +73,7 @@ module Dtvcontroller
       end
     end
 
-    # TODO add a retry with counter and decrement Ruby Tapas #257
+    # TODO add a retry with counter and decrement per Ruby Tapas #257
     def get_json_parsed_response_body(url)
       begin
         response = Net::HTTP.get(URI(url))
