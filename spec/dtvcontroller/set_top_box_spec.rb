@@ -20,7 +20,7 @@ module Dtvcontroller
       it "returns a deprecation warning and '2.0.1'" do
         set_top_box = Dtvcontroller::SetTopBox.new("192.168.1.100")
 
-        expect(set_top_box.ver).to eq("Dtvcontroller::SetTopBox#ver is deprecated, use '$ gem which dtvcontroller'\n2.0.1")
+        expect(set_top_box.ver).to eq("SetTopBox#ver is deprecated, use '$ gem which dtvcontroller'\n2.0.1")
       end
     end
 
@@ -142,6 +142,100 @@ module Dtvcontroller
         set_top_box = Dtvcontroller::SetTopBox.new("192.168.1.100")
         system_info_method = set_top_box.method(:system_info)
         get_sysinfo_method = set_top_box.method(:get_sysinfo)
+
+        expect(system_info_method).to eq(get_sysinfo_method)
+      end
+    end
+
+    describe "#tune_to_channel" do
+      it "changes the channel given a number from 1-65536" do
+        set_top_box = Dtvcontroller::SetTopBox.new("192.168.1.100")
+
+        expect(set_top_box.tune_to_channel(7)).to eq("OK.")
+      end
+
+      it "returns the 'Forbidden' message given channel 0" do
+        failure_string = "Forbidden.Invalid URL parameter(s) found."
+        set_top_box = Dtvcontroller::SetTopBox.new("192.168.1.100")
+
+        expect(set_top_box.tune_to_channel(0)).to eq(failure_string)
+      end
+
+      it "returns the 'Forbidden' message given channel 10000" do
+        failure_string = "Forbidden.Invalid URL parameter(s) found."
+        set_top_box = Dtvcontroller::SetTopBox.new("192.168.1.100")
+
+        expect(set_top_box.tune_to_channel(10000)).to eq(failure_string)
+      end
+
+      it "returns the 'no input' message given a blank channel" do
+        set_top_box = Dtvcontroller::SetTopBox.new("192.168.1.100")
+
+        expect(set_top_box.tune_to_channel("")).to eq("no input")
+      end
+
+      # special IP address 1.2.3.4 triggers the Webmock timeout
+      it "raises a RuntimeError on a timeout" do
+        set_top_box = Dtvcontroller::SetTopBox.new("1.2.3.4")
+
+        expect { set_top_box.tune_to_channel(7) }.to raise_error(RuntimeError)
+      end
+
+      # special IP address 4.3.2.1 triggers the Webmock runtime error
+      it "raises a RuntimeError on a failed connection" do
+        set_top_box = Dtvcontroller::SetTopBox.new("4.3.2.1")
+
+        expect { set_top_box.tune_to_channel(7) }.to raise_error(RuntimeError)
+      end
+    end
+
+    describe "#tune" do
+      it "aliases to #tune_to_channel" do
+        set_top_box = Dtvcontroller::SetTopBox.new("192.168.1.100")
+        tune_method = set_top_box.method(:tune)
+        tune_to_channel_method = set_top_box.method(:tune_to_channel)
+
+        expect(tune_method).to eq(tune_to_channel_method)
+      end
+    end
+
+    describe "#get_currently_playing" do
+      # Use 192.168.1.99 for a TV episode
+      it "returns major and callsign and title and episode title for a tv show" do
+        tv_response = "299: NIKeHD - How I Met Your Mother: Sunrise"
+        set_top_box = Dtvcontroller::SetTopBox.new("192.168.1.99")
+
+        expect(set_top_box.currently_playing).to eq(tv_response)
+      end
+
+      # Use 192.168.1.98 for a movie
+      it "returns major and callsign and title for a movie" do
+        movie_response = "501: HBOeHD - Good Burger"
+        set_top_box = Dtvcontroller::SetTopBox.new("192.168.1.98")
+
+        expect(set_top_box.currently_playing).to eq(movie_response)
+      end
+
+      # special IP address 1.2.3.4 triggers the Webmock timeout
+      it "raises a RuntimeError on a timeout" do
+        set_top_box = Dtvcontroller::SetTopBox.new("1.2.3.4")
+
+        expect { set_top_box.currently_playing }.to raise_error(RuntimeError)
+      end
+
+      # special IP address 4.3.2.1 triggers the Webmock runtime error
+      it "raises a RuntimeError on a failed connection" do
+        set_top_box = Dtvcontroller::SetTopBox.new("4.3.2.1")
+
+        expect { set_top_box.currently_playing }.to raise_error(RuntimeError)
+      end
+    end
+
+    describe "#get_channel" do
+      it "aliases to #currently_playing" do
+        set_top_box = Dtvcontroller::SetTopBox.new("192.168.1.100")
+        system_info_method = set_top_box.method(:get_channel)
+        get_sysinfo_method = set_top_box.method(:currently_playing)
 
         expect(system_info_method).to eq(get_sysinfo_method)
       end
