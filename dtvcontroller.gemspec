@@ -6,8 +6,8 @@ require "dtvcontroller/version"
 Gem::Specification.new do |spec|
   spec.name          = "dtvcontroller"
   spec.version       = Dtvcontroller::VERSION
-  spec.authors       = ["Nicholas M. Petty"]
-  spec.email         = ["nick@ihackeverything.com"]
+  spec.authors       = ["Nicholas M. Petty", "Dan Wagner"]
+  spec.email         = ["nick@ihackeverything.com", "danwagnerco@gmail.com"]
   spec.description   = "Allows control of DirecTV Set Top Boxes whoms Whole-Home -> External Device settings are set to Allow"
   spec.summary       = "DirecTV STB Controller"
   spec.homepage      = "http://github.com/nickpetty/dtvcontroller-gem"
