@@ -1,17 +1,121 @@
 require "dtvcontroller"
 require "webmock/rspec"
 
-system_info_json_as_string = "{\n  \"accessCardId\": \"0123-4567-8901\",\n  \"receiverId\": \"0123 4567 8901\",\n  \"status\": {\n    \"code\": 200,\n    \"commandResult\": 0,\n    \"msg\": \"OK.\",\n    \"query\": \"/info/getVersion\"\n  },\n  \"stbSoftwareVersion\": \"0x912\",\n  \"systemTime\": 1424316674,\n  \"version\": \"1.6\"\n}"
+system_info_json_as_string = <<-eos
+  {
+   "accessCardId": "0123-4567-8901",
+   "receiverId": "0123 4567 8901",
+   "status": {
+    "code": 200,
+    "commandResult": 0,
+    "msg": "OK.",
+    "query": "/info/getVersion"
+   },
+   "stbSoftwareVersion": "0x912",
+   "systemTime": 1424316674,
+   "version": "1.6"
+  }
+eos
 
-change_channel_success_json_as_string = "{\"status\": {\n  \"code\": 200,\n  \"commandResult\": 0,\n  \"msg\": \"OK.\",\n  \"query\": \"/tv/tune?major=7\"\n}}"
+change_channel_success_json_as_string = <<-eos
+  {
+   "status": {
+    "code": 200,
+    "commandResult": 0,
+    "msg": "OK.",
+    "query": "/tv/tune?major=7"
+   }
+  }
+eos
 
-change_channel_fail_json_as_string = "{\"status\": {\n  \"code\": 403,\n  \"commandResult\": 1,\n  \"msg\": \"Forbidden.Invalid URL parameter(s) found.\",\n  \"query\": \"/tv/tune?major=0\"\n}}"
+change_channel_fail_json_as_string = <<-eos
+  {
+   "status": {
+    "code": 403,
+    "commandResult": 1,
+    "msg": "Forbidden.Invalid URL parameter(s) found.",
+    "query": "/tv/tune?major=0"
+   }
+  }
+eos
 
-currently_playing_tv_json_as_string = "{\n  \"broadcastStartTime\": 1424327040,\n  \"callsign\": \"NIKeHD\",\n  \"contentStartTime\": 27579,\n  \"date\": \"20140203\",\n \"duration\": 2160,\n  \"episodeTitle\": \"Sunrise\",\n  \"expiration\": \"0\",\n  \"expiryTime\": 0,\n  \"isOffAir\": false,\n  \"isPartial\": false,\n  \"isPclocked\": 3,\n  \"isPpv\": false,\n  \"isRecording\": false,\n  \"isViewed\": true,\n  \"isVod\": false,\n \"keepUntilFull\": true,\n  \"major\": 299,\n  \"minor\": 65535,\n  \"offset\": 1055,\n  \"priority\": \"20 of 31\",\n  \"programId\": \"13083758\",\n  \"rating\": \"TV-14-D-L\",\n  \"recType\": 3,\n  \"startTime\": 1424327040,\n  \"stationId\": 3900972,\n  \"status\": {\n    \"code\": 200,\n    \"commandResult\": 0,\n    \"msg\": \"OK.\",\n    \"query\": \"/tv/getTuned\"\n  },\n  \"title\": \"How I Met Your Mother\",\n  \"uniqueId\": \"6388\"\n}"
+currently_playing_tv_json_as_string = <<-eos
+  {
+   "broadcastStartTime": 1424327040,
+   "callsign": "NIKeHD",
+   "contentStartTime": 27579,
+   "date": "20140203",
+   "duration": 2160,
+   "episodeTitle": "Sunrise",
+   "expiration": 0,
+   "expiryTime": 0,
+   "isOffAir": false,
+   "isPartial": false,
+   "isPclocked": 3,
+   "isPpv": false,
+   "isRecording": false,
+   "isViewed": true,
+   "isVod": false,
+   "keepUntilFull": true,
+   "major": 299,
+   "minor": 65535,
+   "offset": 1055,
+   "priority": "20 of 31",
+   "programId": 13083758,
+   "rating": "TV-14-D-L",
+   "recType": 3,
+   "startTime": 1424327040,
+   "stationId": 3900972,
+   "status": {
+    "code": 200,
+    "commandResult": 0,
+    "msg": "OK.",
+    "query": "/tv/getTuned"
+   },
+   "title": "How I Met Your Mother",
+   "uniqueId": 6388
+  }
+eos
 
-currently_playing_movie_json_as_string = "{\n  \"callsign\": \"HBOeHD\",\n  \"date\": \"1997\",\n  \"duration\": 6300,\n  \"isOffAir\": false,\n  \"isPclocked\": 3,\n  \"isPpv\": false,\n  \"isRecording\": false,\n  \"isVod\": false,\n  \"major\": 501,\n  \"minor\": 65535,\n  \"offset\": 5294,\n  \"programId\": \"8833886\",\n  \"rating\": \"PG\",\n  \"startTime\": 1424466900,\n  \"stationId\": 2220258,\n  \"status\": {\n    \"code\": 200,\n    \"commandResult\": 0,\n    \"msg\": \"OK.\",\n    \"query\": \"/tv/getTuned\"\n  },\n  \"title\": \"Good Burger\"\n}"
+currently_playing_movie_json_as_string = <<-eos
+  {
+   "callsign": "HBOeHD",
+   "date": 1997,
+   "duration": 6300,
+   "isOffAir": false,
+   "isPclocked": 3,
+   "isPpv": false,
+   "isRecording": false,
+   "isVod": false,
+   "major": 501,
+   "minor": 65535,
+   "offset": 5294,
+   "programId": "8833886",
+   "rating": "PG",
+   "startTime": 1424466900,
+   "stationId": 2220258,
+   "status": {
+    "code": 200,
+    "commandResult": 0,
+    "msg": "OK.",
+    "query": "/tv/getTuned"
+   },
+   "title": "Good Burger"
+  }
+eos
 
-send_dash_key_success_json_as_string = "{\n  \"hold\": \"keyPress\",\n  \"key\": \"dash\",\n  \"status\": {\n    \"code\": 200,\n    \"commandResult\": 0,\n    \"msg\": \"OK.\",\n    \"query\": \"/remote/processKey?key=dash\"\n  }\n}"
+send_dash_key_success_json_as_string = <<-eos
+  {
+   "hold": "keyPress",
+   "key": "dash",
+   "status": {
+    "code": 200,
+    "commandResult": 0,
+    "msg": "OK.",
+    "query": "/remote/processKey?key=dash"
+   }
+  }
+eos
 
 WebMock.disable_net_connect!(:allow_localhost => true)
 
